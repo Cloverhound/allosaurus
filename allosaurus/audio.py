@@ -2,7 +2,7 @@ import wave
 import numpy as np
 from pathlib import Path
 import resampy
-
+from argparse import Namespace
 
 def read_audio(filename, header_only=False, channel=0):
     """
@@ -50,6 +50,36 @@ def read_audio(filename, header_only=False, channel=0):
 
     return audio
 
+def read_samples(samples, config, channel=0):
+    config = config or Namespace(channels=1, frame_rate=8000, sample_width=8)
+
+    # initialize audio
+    audio = Audio()
+
+    # set stream basic info
+    channel_number = config.channels
+
+    # check the input channel is valid
+    assert channel < channel_number
+
+    # set wav header
+    audio.set_header(sample_rate=config.frame_rate, sample_size=len(samples), channel_number=1,
+                        sample_width=config.sample_width)
+
+    # set audio
+    
+
+    # get the first channel if stereo
+    if channel_number == 2:
+        samples = samples[channel::2]
+
+    audio.samples = samples
+
+    # when some utils piping to stdout, sample size might not be correct (e.g: lame --decode)
+    audio.sample_size = len(audio.samples)
+
+    return audio
+    
 
 def resample_audio(audio, target_sample_rate):
     """

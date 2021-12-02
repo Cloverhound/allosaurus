@@ -36,7 +36,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser('a utility to download pretrained models')
     parser.add_argument('-m', '--model', default='latest',  help='specify which model to download. A list of downloadable models are available on Github')
+    parser.add_argument('-r', '--alt_model_path', type=str, default=None, help='specify which directory to use for saving and loading models')
 
     args = parser.parse_args()
 
-    download_model(args.model)
+    download_model(args.model, args.alt_model_path)
