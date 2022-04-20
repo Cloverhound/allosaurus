@@ -9,6 +9,7 @@ from allosaurus.model import resolve_model_name, get_all_models
 from argparse import Namespace
 from datetime import datetime
 import webrtcvad
+from io import BytesIO
 
 def read_recognizer(inference_config_or_name='latest', alt_model_path=None):
     if alt_model_path:
@@ -64,7 +65,9 @@ class Recognizer:
     def recognize(self, filename, lang_id='ipa', topk=1, emit=1.0, timestamp=False):
         # recognize a single file
 
-        assert str(filename).endswith('.wav'), "only wave file is supported in allosaurus"
+        # filename check (skipping for BytesIO objects)
+        if not isinstance(filename, BytesIO):
+            assert str(filename).endswith('.wav'), "only wave file is supported in allosaurus"
 
         # load wav audio
         audio = read_audio(filename)
