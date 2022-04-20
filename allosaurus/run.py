@@ -4,6 +4,9 @@ from allosaurus.bin.download_model import download_model
 from pathlib import Path
 import argparse
 
+from allosaurus.audio import read_audio, read_samples
+import numpy as np
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser('Allosaurus phone recognizer')
@@ -67,8 +70,31 @@ if __name__ == '__main__':
         # check file format
         assert args.input.endswith('.wav'), " Error: Please use a wav file. other audio files can be converted to wav by sox"
 
+        # temp run streaming
+        assert str(args.input).endswith('.wav'), "only wave file is supported in allosaurus"
+        audio = read_audio(args.input)
+        print(len(audio.samples))
+        samples = audio.samples#[0:30000]
+
+        phones = recognizer.recognize_samples(samples, args.lang, args.topk, args.emit, args.timestamp)
+        # stream = recognizer.streaming_recognize(args)
+
+        # stream.on('data', lambda x : print(x))
+
+        # stream.write(audio.samples)
+        # stream.write(audio.samples[0:8000])
+        # stream.write(audio.samples[8000:16000])
+        # stream.write(audio.samples[16000:24000])
+        # stream.write(audio.samples[24000:32000])
+        # stream.write(audio.samples[32000:40000])
+        # stream.write(audio.samples[40000:48000])
+        # stream.write(audio.samples[48000:56000])
+        # stream.write(audio.samples[56000:64000])
+        # stream.write(audio.samples[64000:72000])
+        # stream.write(audio.samples[72000:])
+
         # run inference
-        phones = recognizer.recognize(args.input, args.lang, args.topk, args.emit, args.timestamp)
+        #phones = recognizer.recognize(args.input, args.lang, args.topk, args.emit, args.timestamp)
 
         if output_fd:
             output_fd.write(phones+'\n')
